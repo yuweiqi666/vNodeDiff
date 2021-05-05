@@ -5,7 +5,7 @@ import vnode from "./vnode"
  * 
  * 调用时的参数形态必须是下面三种之一 
  *  1. h("", {}, "")
- *  2. h("", {}, [])
+ *  2. h("", {}, [h(), h()...])
  *  3. h("", {}, h())
  */
 
@@ -16,11 +16,11 @@ export default function(sel, data, c) {
   }
   // 检查参数的类型
   if(typeof c == "string" || typeof c == "number") {
-    // 形态1
+    // 形态1  c是字符串或者是数字   h(sel, data, "文字")
     return vnode(sel, data, undefined, c, undefined)
   } else if(Array.isArray(c)) {
     let children = []
-    // 形态2
+    // 形态2     c是数组       h(sel, data, [h(), h(), h()])
     // 遍历数组c  里面的元素必须是对象
     for(let i = 0; i < c.length; i++) {
       if(!(typeof c[i] == "object" && c[i].hasOwnProperty("sel"))) {
@@ -33,7 +33,7 @@ export default function(sel, data, c) {
     return vnode(sel, data, children, undefined, undefined)
 
   } else if(typeof c == "object" && c.hasOwnProperty("sel")) {
-    // 形态3
+    // 形态3   c是对象       h(sel, data, h())
     let children = [c]
 
     return vnode(sel, data, children, undefined, undefined)

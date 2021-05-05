@@ -10,7 +10,7 @@ import {
 
 // 创建patch函数
 
-const pathch = init([classModule, propsModule, styleModule, eventListenersModule]) 
+const patch = init([classModule, propsModule, styleModule, eventListenersModule]) 
 
 // 创建虚拟节点
 var myVnode1 = h("a", { props: {href: "http://www.atguigu.com"} }, "张三")
@@ -32,4 +32,4 @@ console.log(myVnode3)
 
 const container = document.getElementById("container")
 
-pathch(container, myVnode3)
+patch(container, myVnode3)
