@@ -1,4 +1,7 @@
 import createElement from "./createElement"
+import updateChildren from "./updateChildren"
+
+
 // oldVnode和newVnode是同一节点执行的函数
 export default function patchVnode(oldVnode, newVnode) {
   // 判断oldVnode和newVnode是不是同一个对象
@@ -34,8 +37,8 @@ export default function patchVnode(oldVnode, newVnode) {
 
       } else {
         //oldVnode有children  newVnode有children  最复杂的情况 
-        // 遍历新节点 
-        // 所有未处理的节点的开头
+        // 子节点优化策略
+        updateChildren(oldVnode.elm, oldVnode.children, newVnode.children)
         
       }
     }

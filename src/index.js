@@ -13,13 +13,9 @@ const myVnode1 = h("ul", {}, [
 ])
 
 const myVnode2 = h("ul", {}, [
-  h("li", {key: "A"}, "A"),
+  h("li", {key: "C"}, "c"),
   h("li", {key: "B"}, "B"),
-  h("li", {key: "M"}, "M"),
-  h("li", {key: "N"}, "N"),
-  h("li", {key: "C"}, "C"),
-  h("li", {key: "P"}, "P"),
-  h("li", {key: "Q"}, "Q")
+  h("li", {key: "A"}, "A")
 ])
 
 patch(container, myVnode1)

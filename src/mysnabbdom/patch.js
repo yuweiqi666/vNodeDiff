@@ -8,7 +8,7 @@ export default function patch(oldVnode, newVnode) {
     //传入的第一个参数是dom节点  此时需要包装成虚拟节点
     oldVnode = vnode(oldVnode.tagName.toLowerCase(), {}, [], undefined, oldVnode)
 
-    console.log("oldVnode", oldVnode);
+    // console.log("oldVnode", oldVnode);
   }
 
   // 判断oldVnode和newVnode是不是同一个节点
@@ -16,7 +16,6 @@ export default function patch(oldVnode, newVnode) {
     // 是同一个节点
     patchVnode(oldVnode, newVnode)
   } else {
-    console.log(123);
     // 不是同一个节点 暴力插入新的 删除旧的
     var newVnodedom = createElement(newVnode)
      //插入新的
