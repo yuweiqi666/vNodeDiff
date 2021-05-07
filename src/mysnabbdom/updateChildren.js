@@ -24,9 +24,22 @@ export default function updateChildren(parentNode, oldChild, newChild) {
   let newEndIndex = newChild.length - 1
   let newEndNode = newChild[newEndIndex]
 
+  let keyMap = null
 
   // 循环开始
   while(oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
+    // 判断命中之前要先判断指针位置是不是undefined
+    if(!oldStartNode) {
+      oldStartNode = oldChild[++oldStartIndex]
+    }
+
+    if(!oldEndNode) {
+      oldEndNode = oldChild[--oldEndIndex]
+    }
+
+  
+
+
     if(checkSameVnode(oldStartNode, newStartNode)) {
       // 1.新前与旧前
       // 递归精细化对比
@@ -59,32 +72,61 @@ export default function updateChildren(parentNode, oldChild, newChild) {
       oldEndNode = oldChild[--oldEndIndex] 
     } else {
       // 四种都没有命中
-      oldChild.forEach(item => {
-        if(item.sel == newChild[newStartIndex].sel && item.key == newChild[newStartIndex].key) {
-          item = undefined
+      console.log("四种都没有命中");
+      // 将oldNewIndex和oldEndIndex之间的虚拟节点的key保存起来
+      if(!keyMap) {
+        keyMap = {}
+        for(let i = oldStartIndex; i <= oldEndIndex; i++) {
+          let key = oldChild[i].key
+          if(key !== undefined) {
+            keyMap[key] = i
+          }
         }
-        oldChild[newStartIndex - 1] = newChild[newStartIndex]
-      })
+        console.log("keyMap", keyMap);
+        // 寻找当前newStartNode在keyMAP中的映射
+        const idxInOld = keyMap[newStartNode.key]
+        if(idxInOld) {
+          // idxInOld不是undefined表示不是全新的项 要移动
+          let elmToMove = oldChild[idxInOld]
+          //新老节点对比
+          patchVnode(elmToMove, newStartNode)
+          // 移动的节点位置打上标记undefined
+          oldChild[idxInOld] = undefined
+          // 移动节点
+          parentNode.insertBefore(elmToMove.elm, oldStartNode.elm)
+
+        } else {
+          // idxInOld是undefined表示这个是全新的一项
+          parentNode.insertBefore(createElement(newStartNode), oldStartNode.elm)
+        }
+      }
+      // 指针下移  只移新前
+      newStartNode = newChild[++newStartIndex]
     }
 
   }
 
-  // 循环结束
-  if(newStartIndex > newEndIndex) {
-    // 删除 旧前与旧后之间的节点
-    oldChild.slice(oldStartIndex, oldEndIndex + 1)
-    let num = oldEndIndex - oldStartIndex + 1
-    for(let i = oldStartIndex; i < num; i++) {
-      parentNode.removeChild(oldChild[oldStartIndex].elm)
-    }
-  } else if(oldStartIndex > oldEndIndex) {
-    // 新增新前和新后之间的节点
-    let num = newEndIndex - newStartIndex + 1
-    for(let i = newStartIndex; i < num; i++) {
-      parentNode.insertBefore(createElement(newChild[newStartIndex]) ,oldEndNode.elm.nextSibling)
-    } 
-  }
-
-
+  // 循环结束 // 循环结束后移动节点不需要将原来的位置进行undefined因为 后面不需要去循环命中了
+  if(newStartIndex > newEndIndex) {
+    console.log(123);
+    // 删除 旧前与旧后之间的节点
+    oldChild.slice(oldStartIndex, oldEndIndex + 1)
+    for(let i = oldStartIndex; i <= oldEndIndex; i++) {
+      if(oldChild[i]) {
+         parentNode.removeChild(oldChild[i].elm)
+      }
+    }
+  } else if(oldStartIndex > oldEndIndex) {
+    // 新增新前和新后之间的节点
+    if(oldEndIndex < 0) {
+        for(let i = newStartIndex; i <= newEndIndex; i++) {
+        parentNode.insertBefore(createElement(newChild[i]) ,oldStartNode.elm)
+      } 
+    } else {
+        for(let i = newStartIndex; i <= newEndIndex; i++) {
+        parentNode.insertBefore(createElement(newChild[i]) ,oldEndNode.elm.nextSibling)
+      } 
+    }
+  }
   console.log("精细化对比后的oldChild", oldChild);
 }
